@@ -22,10 +22,22 @@ async function seedAdminFeature() {
         Role.findOrCreate({name: 'ROLE_ADMIN'}, {
             defaults: {description: 'For Admin Users'}
         }),
+        Role.findOrCreate({name: 'ROLE_MANAGER'}, {
+            defaults: {description: 'For Manager Users'}
+        }),
+        Role.findOrCreate({name: 'ROLE_EDITOR'}, {
+            defaults: {description: 'For Editor Users'}
+        }),
+        Role.findOrCreate({name: 'ROLE_USER'}, {
+            defaults: {description: 'For Normal Users'}
+        }),
+        Role.findOrCreate({name: 'ROLE_GUEST'}, {
+            defaults: {description: 'For Guest Users'}
+        }),
         User.findOrCreate({username: 'admin'}, {
             defaults: {
                 password: 'password',
-                email: 'admin@api_mongoose.com',
+                email: 'admin@example.com',
                 first_name: 'adminFN',
                 last_name: 'adminLN',
             },
@@ -387,7 +399,6 @@ async function seedAll() {
 }
 
 seedAll().then(() => {
-
     process.exit(0);
 }).catch(err => {
     throw err;
