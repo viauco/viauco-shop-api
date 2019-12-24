@@ -4,6 +4,7 @@ const _ = require("lodash");
 
 module.exports = db =>
     db.ModelBase.extend({
+        
         tableName: 'roles',
 
         users() {

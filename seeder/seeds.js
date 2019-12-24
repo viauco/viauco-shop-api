@@ -2,7 +2,6 @@ const ORDER_STATUS = require('../constants').ORDER_STATUS;
 const faker = require('faker');
 const _ = require('lodash');
 
-const knex = require('../config/db.config').knex;
 const User = require('../config/db.config').User;
 const Address = require('../config/db.config').Address;
 const Product = require('../config/db.config').Product;
@@ -45,17 +44,19 @@ async function seedAdminFeature() {
         })
     ]).then(async results => {
         const role = results[0];
-        const user = results[1];
+        const user = results[5];
 
         if (!user.isAdminSync()) {
             //user.roles().model.fetchAll().then();
             await user.roles().attach(role.id, {debug: true}).then(res => {
                 console.log(res);
             }).catch(err => {
+                console.log('user err>>>>>', err)
                 throw err;
             });
         }
     }).catch(err => {
+        console.log('err>>>>>', err)
         throw err;
     });
 }
