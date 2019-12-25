@@ -13,11 +13,11 @@ const Tag = require('../config/db.config').Tag;
 const Category = require('../config/db.config').Category;
 const UserRole = require('../config/db.config').UserRole;
 
-async function seedAdminFeature() {
+function seedAdminFeature() {
 
     console.log('[+] Seeding Admin feature');
 
-    await Promise.all([
+    Promise.all([
         Role.findOrCreate({name: 'ROLE_ADMIN'}, {
             defaults: {description: 'For Admin Users'}
         }),
@@ -32,54 +32,58 @@ async function seedAdminFeature() {
         }),
         Role.findOrCreate({name: 'ROLE_GUEST'}, {
             defaults: {description: 'For Guest Users'}
-        }),
-        User.findOrCreate({username: 'admin'}, {
+        })
+    ])
+    .then( (roles) => {
+        console.log(roles)
+        return User.findOrCreate({username: 'admin'}, {
             defaults: {
                 password: 'password',
                 email: 'admin@example.com',
-                first_name: 'adminFN',
-                last_name: 'adminLN',
+                first_name: 'First',
+                last_name: 'Name',
             },
             withRelated: ['roles'],
         })
-    ]).then(async results => {
-        const role = results[0];
-        const user = results[5];
-
-        if (!user.isAdminSync()) {
-            //user.roles().model.fetchAll().then();
-            await user.roles().attach(role.id, {debug: true}).then(res => {
+    } )
+    .then( (user) => {
+        console.log(user)
+        if (!user.isAdminSync()) 
+        {
+            user.roles().model.fetchAll()
+            .then( (res) => {
                 console.log(res);
-            }).catch(err => {
+            })
+            .catch(err => {
                 console.log('user err>>>>>', err)
                 throw err;
             });
         }
-    }).catch(err => {
+    }).catch( (err) => {
         console.log('err>>>>>', err)
         throw err;
     });
 }
 
-async function seedUsersFeature() {
+function seedUsersFeature() {
     console.log('[+] Seeding Author feature');
 
-    await Role.findOrCreate({name: 'ROLE_USER'}, {
+    Role.findOrCreate({name: 'ROLE_USER'}, {
         defaults: {description: 'For standard Users'}
-    }).then(async role => {
+    }).then( role => {
 
-        await UserRole.where('role_id', role.id).count('*').then(async count => {
+        UserRole.where('role_id', role.id).count('*').then( count => {
             const usersSeed = 30 - count;
             if (usersSeed > 0) {
                 for (let i = 0; i < usersSeed; i++) {
-                    await User.create({
+                    User.create({
                         first_name: faker.name.firstName(),
                         last_name: faker.name.lastName(),
                         email: faker.internet.email(),
                         username: faker.name.firstName() + faker.name.lastName(),
                         password: 'password'
-                    }).then(async user => {
-                        await user.roles().attach(role.id).then(res => {
+                    }).then( user => {
+                        user.roles().attach(role.id).then(res => {
                             console.log('[+] Seeded a standard user ' + user.get('username'));
                         }).catch(err => {
                             throw err;
@@ -99,7 +103,8 @@ async function seedUsersFeature() {
 }
 
 function seedTags() {
-    return Promise.all([
+    console.log('[+] seedTags');
+    Promise.all([
         Tag.findOrCreate({name: 'jeans'}, {
             defaults: {
                 description: 'jeans for everyone'
@@ -120,7 +125,8 @@ function seedTags() {
 }
 
 function seedCategories() {
-    return Promise.all([
+    console.log('[+] seedCategories');
+    Promise.all([
         Category.findOrCreate({name: 'men'}, {
             default: {
                 description: 'men fashion'
@@ -135,18 +141,18 @@ function seedCategories() {
             defaults: {
                 description: 'Ruby fashion'
             }
-        })]).then(results => {
+        })]).then( results => {
         console.log('[+] Seeded categories');
     }).catch(err => console.error(err));
 
 }
 
-async function seedProducts() {
+function seedProducts() {
     // faker.lorem.paragraphs
     // faker.lorem.sentence
     // faker.random.number
-
-    await Product.query().count('* as productCount').then(async products => {
+    console.log('[+] seedProducts');
+    Product.query().count('* as productCount').then( products => {
         const count = products[0].productCount;
         let productsToSeed = 17;
         productsToSeed -= count;
@@ -154,26 +160,26 @@ async function seedProducts() {
             return;
         }
 
-        await Promise.all([
+        Promise.all([
             Tag.fetchAll({columns: ['id']}),
             Category.fetchAll({columns: ['id']}),
-        ]).then(async results => {
+        ]).then( results => {
             const tags = results[0].serialize();
             const categories = results[1].serialize();
 
             for (let i = 0; i < productsToSeed; i++) {
                 let tag = tags[Math.floor(Math.random() * tags.length)];
                 let category = categories[Math.floor(Math.random() * categories.length)];
-                await Product.create({
+                Product.create({
                     name: faker.commerce.productName() + faker.random.number({min: 0, max: 120}),
                     description: faker.lorem.text(),
                     price: parseInt(faker.commerce.price(10, 1000, 2)) * 100,
                     stock: faker.random.number({min: 0, max: 120}),
-                }).then(async product => {
+                }).then( product => {
                     const promises = [];
                     promises.push(product.tags().attach(tag.id));
                     promises.push(product.categories().attach(category.id));
-                    await Promise.all(promises).then(res => {
+                    Promise.all(promises).then(res => {
                         console.log('[+] seeded product successfully')
                     }).catch(err => {
                         throw err;
@@ -190,12 +196,13 @@ async function seedProducts() {
     });
 }
 
-async function seedComments() {
-    await Promise.all([
+function seedComments() {
+    console.log('[+] seedComments');
+    Promise.all([
         Comment.query().count('* as commentCount'),
         Product.fetchAll({columns: ['id']}),
         User.fetchAll({columns: ['id']})
-    ]).then(async res => {
+    ]).then( res => {
         const count = res[0][0]['commentCount'];
         const product_ids = res[1];
         const user_ids = res[2];
@@ -218,7 +225,7 @@ async function seedComments() {
                 user_id: user_id,
                 product_id: product_id,
             });
-            await comment.save().then(comment => {
+            comment.save().then(comment => {
 
             }).catch(err => {
                 throw err;
@@ -230,15 +237,16 @@ async function seedComments() {
 
 }
 
-async function seedAddresss() {
-    await Address.query().count('* as addressesCount').then(async result => {
+function seedAddresss() {
+    console.log('[+] seedAddresss');
+    Address.query().count('* as addressesCount').then( result => {
             const addressesCount = result[0]['addressesCount'];
             let addressesToSeed = 23;
             addressesToSeed -= addressesCount;
 
-            await User.fetchAll({
+            User.fetchAll({
                 columns: ['id', 'first_name', 'last_name']
-            }).then(async users => {
+            }).then( users => {
                 users = users.serialize();
                 const userIds = users.map(user => user.id); // or results[0].pluck('id')
 
@@ -260,7 +268,7 @@ async function seedAddresss() {
                         address.set('last_name', faker.name.lastName());
                     }
 
-                    await address.save(null, {debug: true}).then(result => {
+                    address.save(null, {debug: true}).then(result => {
                     }).catch(err => {
                         throw err;
                     });
@@ -274,8 +282,9 @@ async function seedAddresss() {
     });
 }
 
-async function seedOrders() {
-    await Order.fetchAll({
+function seedOrders() {
+    console.log('[+] seedOrders');
+    Order.fetchAll({
         columns: ['id']
     }).then(res => {
 
@@ -295,7 +304,7 @@ async function seedOrders() {
             promises.push(Address.findAll(null, {columns: ['id', 'user_id']}));
             promises.push(Product.findAll(null, {columns: ['id', 'name', 'slug', 'price']}));
 
-            return Promise.all(promises).then(res => {
+            Promise.all(promises).then(res => {
                 promises.length = 0; // Clear the array
                 const users = res[0].serialize();
                 const addresses = res[1].serialize();
@@ -322,7 +331,7 @@ async function seedOrders() {
                     promises.push(Order.create(order, {debug: true}));
                 }
 
-                return Promise.all(promises).then(res => {
+                Promise.all(promises).then(res => {
                     const orders = res;
                     promises.length = 0; // Clear the array
 
@@ -343,7 +352,7 @@ async function seedOrders() {
                         }
                     }
 
-                    return Promise.all(promises).then(res => {
+                    Promise.all(promises).then(res => {
                         const orderItems = res;
 
                         console.log('Done');
@@ -382,19 +391,20 @@ async function seedOrders() {
     */
 }
 
-async function seedAll() {
-    await seedAdminFeature();
-    await seedUsersFeature();
-    await seedTags();
-    await seedCategories();
+function seedAll() {
+    
+    seedAdminFeature();
+    /*seedUsersFeature();
+    seedTags();
+    seedCategories();
 
-    await seedProducts();
-    await seedComments();
+    seedProducts();
+    seedComments();
 
-    await seedAddresss();
+    seedAddresss();
 
-    await seedOrders();
-
+    seedOrders();*/
+    
     console.log('[+] Finished seeding');
     process.exit();
 }
