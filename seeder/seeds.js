@@ -21,7 +21,7 @@ function seedAdminFeature() {
         Role.findOrCreate({name: 'ROLE_ADMIN'}, {
             defaults: {description: 'For Admin Users'}
         }),
-        Role.findOrCreate({name: 'ROLE_MANAGER'}, {
+        /*Role.findOrCreate({name: 'ROLE_MANAGER'}, {
             defaults: {description: 'For Manager Users'}
         }),
         Role.findOrCreate({name: 'ROLE_EDITOR'}, {
@@ -32,9 +32,9 @@ function seedAdminFeature() {
         }),
         Role.findOrCreate({name: 'ROLE_GUEST'}, {
             defaults: {description: 'For Guest Users'}
-        })
+        })*/
     ])
-    .then( (roles) => {
+    .then( function(roles) {
         console.log(roles)
         return User.findOrCreate({username: 'admin'}, {
             defaults: {
@@ -46,20 +46,20 @@ function seedAdminFeature() {
             withRelated: ['roles'],
         })
     } )
-    .then( (user) => {
+    .then( function(user) {
         console.log(user)
         if (!user.isAdminSync()) 
         {
             user.roles().model.fetchAll()
-            .then( (res) => {
+            .then( function(res) {
                 console.log(res);
             })
-            .catch(err => {
+            .catch( function(err) {
                 console.log('user err>>>>>', err)
                 throw err;
             });
         }
-    }).catch( (err) => {
+    }).catch( function(err) {
         console.log('err>>>>>', err)
         throw err;
     });

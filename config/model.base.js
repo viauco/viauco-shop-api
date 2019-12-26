@@ -93,8 +93,7 @@ module.exports = function modelBase (bookshelf, params) {
      */
     findOne: function (query, options) {
       options = extend({ require: true }, options)
-
-      return this.forge(query).fetch(options).then( (res) => { return res } ).catch( (err) => { return null} );
+      return this.forge(query).fetch(options);
     },
 
     /**
@@ -147,12 +146,12 @@ module.exports = function modelBase (bookshelf, params) {
       */
     findOrCreate: function (data, options) {
       var me = this;
-      return me.findOne(data, extend(options, { require: false }))
+      return Promise.all([me.findOne(data, extend(options, { require: false }))])
       .bind(me)
       .then(function (model) {
         console.log('findOrCreate', model)
         var defaults = options && options.defaults
-        return model || this.create(extend(defaults, data), options)
+        return model || me.create(extend(defaults, data), options)
       })
     },
 
