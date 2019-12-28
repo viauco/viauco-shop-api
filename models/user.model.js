@@ -1,6 +1,6 @@
 'use strict';
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
 const {isString} = require('lodash/fp');
 const jwt = require('jsonwebtoken');
 

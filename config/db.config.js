@@ -4,11 +4,12 @@ db.knex = require('knex')(require('../knexfile')[mode]);
 
 db.bookshelf = require('bookshelf')(db.knex);
 
-db.bookshelf.plugin(require('bookshelf-virtuals-plugin'));
-db.bookshelf.plugin(require('bookshelf-cascade-delete'));
-db.bookshelf.plugin(require('bookshelf-eloquent'));
+db.bookshelf.plugin('pagination');
+db.bookshelf.plugin(require('bookshelf-scopes'));
 
-db.ModelBase = db.bookshelf.Model
+db.bookshelf.plugin('virtuals');
+
+db.ModelBase = require('bookshelf-modelbase')(db.bookshelf);
 
 db.User = require('./../models/user.model')(db);
 db.Role = require('./../models/role.model')(db);

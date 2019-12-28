@@ -6,8 +6,8 @@ const AuthMiddleware = require('../middlewares/auth.middleware');
 const parsePaginationParams = require('../middlewares/paging.middleware').parsePaginationParams;
 
 
-router.get('/orders', parsePaginationParams, AuthMiddleware.mustBeAuthenticated, ordersController.getOrders);
-router.get('/orders/:order_load_ids', AuthMiddleware.mustBeAuthenticated, AuthMiddleware.userOwnsItOrIsAdmin, ordersController.getOrderDetails);
-router.post('/orders', ordersController.createOrder);
+router.get('', parsePaginationParams, AuthMiddleware.mustBeAuthenticated, ordersController.getOrders);
+router.get('/:order_load_ids', AuthMiddleware.mustBeAuthenticated, AuthMiddleware.userOwnsItOrIsAdmin, ordersController.getOrderDetails);
+router.post('', ordersController.createOrder);
 
 module.exports = router;

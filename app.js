@@ -5,6 +5,15 @@ const path = require('path');
 const logger = require('morgan');
 const cors = require('cors');
 
+const productsRouter = require('./routes/products.routes');
+const usersRouter = require('./routes/users.routes');
+const addressesRouter = require('./routes/addresses.routes');
+const commentsRouter = require('./routes/comments.routes');
+const tagAndCategoriesRouter = require('./routes/tags_categories.routes');
+const pagesRouter = require('./routes/pages.routes');
+
+const ordersRouter = require('./routes/orders.routes');
+
 const AuthMiddleware = require('./middlewares/auth.middleware');
 const BenchmarkMiddleware = require('./middlewares/benchmark.middleware');
 const AppResponseDto = require('./dtos/responses/app_response.dto');
@@ -18,20 +27,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-require('./services/bus')(app);
-require('./services/oauth')(app);
-require('./services/socket')(app);
-
 app.use(AuthMiddleware.loadUser);
-
-const fs = require('fs');
-fs.readdir('./routes', (err, files) => {
-  if( !err ) {
-    files.forEach( (file) => {
-      app.use('/api', require('./routes/' + file) );
-    });
-  }
-});
+app.use('/api/products', productsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api', commentsRouter);
+app.use('/api', addressesRouter);
+app.use('/api/orders', ordersRouter);
+app.use('/api', tagAndCategoriesRouter);
+app.use('/api', pagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
