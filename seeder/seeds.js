@@ -2,17 +2,17 @@ const ORDER_STATUS = require('../constants').ORDER_STATUS;
 const faker = require('faker');
 const _ = require('lodash');
 
-const knex = require('../config/db.config').knex;
-const User = require('../config/db.config').User;
-const Address = require('../config/db.config').Address;
-const Product = require('../config/db.config').Product;
-const Comment = require('../config/db.config').Comment;
-const Order = require('../config/db.config').Order;
-const OrderItem = require('../config/db.config').OrderItem;
-const Role = require('../config/db.config').Role;
-const Tag = require('../config/db.config').Tag;
-const Category = require('../config/db.config').Category;
-const UserRole = require('../config/db.config').UserRole;
+const knex = require('../config/db').knex;
+const User = require('../config/db').User;
+const Address = require('../config/db').Address;
+const Product = require('../config/db').Product;
+const Comment = require('../config/db').Comment;
+const Order = require('../config/db').Order;
+const OrderItem = require('../config/db').OrderItem;
+const Role = require('../config/db').Role;
+const Tag = require('../config/db').Tag;
+const Category = require('../config/db').Category;
+const UserRole = require('../config/db').UserRole;
 
 async function seedAdminFeature() {
 

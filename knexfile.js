@@ -15,7 +15,7 @@ module.exports = {
             max: process.env.DB_MAX_POOL || 10
         },
         migrations: {
-            tableName: process.env.DB_MIRATIONS_TABLE_NAME || 'knex_migrations'
+            tableName: process.env.DB_MIRATIONS_TABLE_NAME || 'migrations'
         }
     },
     staging: {
@@ -30,7 +30,7 @@ module.exports = {
             max: 10
         },
         migrations: {
-            tableName: 'knex_migrations'
+            tableName: 'migrations'
         }
     },
 
@@ -46,7 +46,7 @@ module.exports = {
             max: 10
         },
         migrations: {
-            tableName: 'knex_migrations'
+            tableName: 'migrations'
         }
     }
 
