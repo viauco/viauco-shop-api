@@ -1,11 +1,10 @@
 const UserDto = require('./users');
 const PageMetaDto = require('./page_meta');
 
-
 function buildPagedList(addresses, page, pageSize, totalProductsCount, basePath) {
     return {
         success: true,
-        page_meta: PageMetaDto.build(addresses.length, page, pageSize, totalProductsCount, basePath),
+        meta: PageMetaDto.build(addresses.length, page, pageSize, totalProductsCount, basePath),
         ...buildDtos(addresses),
     }
 }
@@ -17,8 +16,9 @@ function buildDtos(addresses) {
 }
 
 function buildDto(address, includeUser = false) {
-    if (address == null)
+    if (address == null) {
         return {};
+    }
     const summary = {
         id: address.id,
         first_name: address.first_name,
@@ -29,9 +29,10 @@ function buildDto(address, includeUser = false) {
         zip_code: address.zip_code,
     };
 
-    if (includeUser)
+    if (includeUser) {
         summary.user = UserDto.buildOnlyForIdAndUsername(address.user);
-
+    }
+    
     return summary;
 }
 

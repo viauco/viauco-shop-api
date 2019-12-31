@@ -5,14 +5,15 @@ const PageMetaDto = require('./page_meta');
 function buildPagedList(comments, page, pageSize, totalCommentsCount, basePath, includeUser = false, includeProduct = false) {
     return {
         success: true,
-        page_meta: PageMetaDto.build(comments.length, page, pageSize, totalCommentsCount, basePath),
+        meta: PageMetaDto.build(comments.length, page, pageSize, totalCommentsCount, basePath),
         ...buildDtos(comments, includeUser, includeProduct),
     }
 }
 
 function buildDtos(comments, includeUser = false, includeProduct = false) {
-    if (comments == null)
+    if (comments == null) {
         return {comments: []};
+    }
     return {
         comments: comments.map(comment => buildDto(comment, includeUser, includeProduct))
     };

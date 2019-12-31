@@ -1,13 +1,12 @@
 const PageMetaDto = require("./page_meta");
 const TagDto = require("./tags");
 const CategoryDto = require("./categories");
-const UserDto = require("./users");
 const CommentsDto = require("./comments");
 
 function buildPagedList(products, page, pageSize, totalResourcesCount, basePath) {
     return {
         success: true,
-        page_meta: PageMetaDto.build(products.length, page, pageSize, totalResourcesCount, basePath),
+        meta: PageMetaDto.build(products.length, page, pageSize, totalResourcesCount, basePath),
         ...buildDtos(products),
         //products: products.map(product => product.getJsonSummary())
     }

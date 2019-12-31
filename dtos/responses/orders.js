@@ -7,7 +7,7 @@ const PageMetaDto = require('./page_meta');
 function buildPagedList(orders, page, pageSize, totalOrdersCount, basePath, includeUser = false, includeAddress = false, includeProduct = false) {
     return {
         success: true,
-        page_meta: PageMetaDto.build(orders.length, page, pageSize, totalOrdersCount, basePath),
+        meta: PageMetaDto.build(orders.length, page, pageSize, totalOrdersCount, basePath),
         ...buildDtos(orders, includeUser, includeAddress, includeProduct),
     }
 }
@@ -36,11 +36,13 @@ function buildDto(order, includeUser = false, includeAddress = false, includeOrd
             };
         });
     }
-    if (includeUser)
+    if (includeUser) {
         data.user = UserDto.buildOnlyForIdAndUsername(order.user);
+    }
 
-    if (includeAddress)
+    if (includeAddress) {
         data.address = AddressDto.buildDto(order.address, includeAddressUser);
+    }
 
     return data;
 }

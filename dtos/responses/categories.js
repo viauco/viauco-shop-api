@@ -3,14 +3,15 @@ const PageMetaDto = require('./page_meta');
 function buildPagedList(categories, page, pageSize, totalProductsCount, basePath) {
     return {
         success: true,
-        page_meta: PageMetaDto.build(categories.length, page, pageSize, totalProductsCount, basePath),
+        meta: PageMetaDto.build(categories.length, page, pageSize, totalProductsCount, basePath),
         ...buildDtos(categories),
     }
 }
 
 function buildDtos(categories) {
-    if (!categories)
+    if (!categories) {
         return {categories: []};
+    }
     return {
         categories: categories.map(category => buildDto(category, true))
     }
