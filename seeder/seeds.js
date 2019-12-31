@@ -1,7 +1,6 @@
 const ORDER_STATUS = require('../constants').ORDER_STATUS;
 const faker = require('faker');
 const _ = require('lodash');
-const Promise = require('bluebird');
 
 const knex = require('../config/db.config').knex;
 const User = require('../config/db.config').User;
@@ -15,38 +14,30 @@ const Tag = require('../config/db.config').Tag;
 const Category = require('../config/db.config').Category;
 const UserRole = require('../config/db.config').UserRole;
 
-function seedAdminFeature() {
+async function seedAdminFeature() {
 
     console.log('[+] Seeding Admin feature');
-    Role.findOrCreate({name: 'ROLE_ADMIN'}, {
-        defaults: {description: 'For Admin Users'}
-    })
-    .then( ( role ) =>  {
+
+    await Promise.all([
+        Role.findOrCreate({name: 'ROLE_ADMIN'}, {
+            defaults: {description: 'For Admin Users'}
+        }),
         User.findOrCreate({username: 'admin'}, {
             defaults: {
                 password: 'password',
-                email: 'admin@example.com',
+                email: 'admin@api_mongoose.com',
                 first_name: 'adminFN',
                 last_name: 'adminLN',
             },
             withRelated: ['roles'],
         })
-        .then( (user) => {
-            return { user: user, role: role}
-        })
-        .catch( (err) => {
-            throw err;
-        } )
-    })
-    .then( (result) => {
-        const role = result.role;
-        const user = result.user;
+    ]).then(async results => {
+        const role = results[0];
+        const user = results[1];
 
         if (!user.isAdminSync()) {
             //user.roles().model.fetchAll().then();
-            user.roles()
-            .attach(role.id, {debug: true})
-            .then(res => {
+            await user.roles().attach(role.id, {debug: true}).then(res => {
                 console.log(res);
             }).catch(err => {
                 throw err;
@@ -57,35 +48,30 @@ function seedAdminFeature() {
     });
 }
 
-function seedUsersFeature() {
+async function seedUsersFeature() {
     console.log('[+] Seeding Author feature');
 
-    Role.findOrCreate({name: 'ROLE_USER'}, {
+    await Role.findOrCreate({name: 'ROLE_USER'}, {
         defaults: {description: 'For standard Users'}
-    }).then( (role) => {
+    }).then(async role => {
 
-        UserRole.where('role_id', role.id).count('*')
-        .then( (count) => {
+        await UserRole.where('role_id', role.id).count('*').then(async count => {
             const usersSeed = 30 - count;
-            if (usersSeed > 0) 
-            {
-                for (let i = 0; i < usersSeed; i++) 
-                {
-                    User.create({
+            if (usersSeed > 0) {
+                for (let i = 0; i < usersSeed; i++) {
+                    await User.create({
                         first_name: faker.name.firstName(),
                         last_name: faker.name.lastName(),
                         email: faker.internet.email(),
                         username: faker.name.firstName() + faker.name.lastName(),
                         password: 'password'
-                    })
-                    .then( (user) => {
-                        user.roles().attach(role.id).then(res => {
+                    }).then(async user => {
+                        await user.roles().attach(role.id).then(res => {
                             console.log('[+] Seeded a standard user ' + user.get('username'));
                         }).catch(err => {
                             throw err;
                         });
-                    })
-                    .catch(err => {
+                    }).catch(err => {
                         throw err;
                     });
                 }
@@ -100,31 +86,24 @@ function seedUsersFeature() {
 }
 
 function seedTags() {
+    return Promise.all([
         Tag.findOrCreate({name: 'jeans'}, {
             defaults: {
                 description: 'jeans for everyone'
             }
-        }).then( () => {
-            Tag.findOrCreate({name: 'shoes'}, {
-                defaults: {
-                    description: 'shoes for everyone'
-                }
-            })
-            .then( () => {
-                Tag.findOrCreate({name: 'jackets'}, {
-                    defaults: {
-                        description: 'jackets for everyone'
-                    }
-                })
-                .catch( (e) => {
-                    throw e;
-                } )
-            } )
-            .catch( (e) => {
-                throw e;
-            } )
-        })
-        .catch(err => console.error(err));
+        }),
+        Tag.findOrCreate({name: 'shoes'}, {
+            defaults: {
+                description: 'shoes for everyone'
+            }
+        }),
+        Tag.findOrCreate({name: 'jackets'}, {
+            defaults: {
+                description: 'jackets for everyone'
+            }
+        })]).then(results => {
+        console.log('[+] Seeded tags')
+    }).catch(err => console.error(err));
 }
 
 function seedCategories() {
@@ -149,13 +128,12 @@ function seedCategories() {
 
 }
 
-function seedProducts() {
+async function seedProducts() {
     // faker.lorem.paragraphs
     // faker.lorem.sentence
     // faker.random.number
 
-    Product.query().count('* as productCount')
-    .then(async products => {
+    await Product.query().count('* as productCount').then(async products => {
         const count = products[0].productCount;
         let productsToSeed = 17;
         productsToSeed -= count;
@@ -163,26 +141,26 @@ function seedProducts() {
             return;
         }
 
-        Promise.all([
+        await Promise.all([
             Tag.fetchAll({columns: ['id']}),
             Category.fetchAll({columns: ['id']}),
-        ]).then( results => {
+        ]).then(async results => {
             const tags = results[0].serialize();
             const categories = results[1].serialize();
 
             for (let i = 0; i < productsToSeed; i++) {
                 let tag = tags[Math.floor(Math.random() * tags.length)];
                 let category = categories[Math.floor(Math.random() * categories.length)];
-                Product.create({
+                await Product.create({
                     name: faker.commerce.productName() + faker.random.number({min: 0, max: 120}),
                     description: faker.lorem.text(),
                     price: parseInt(faker.commerce.price(10, 1000, 2)) * 100,
                     stock: faker.random.number({min: 0, max: 120}),
-                }).then( product => {
+                }).then(async product => {
                     const promises = [];
                     promises.push(product.tags().attach(tag.id));
                     promises.push(product.categories().attach(category.id));
-                    Promise.all(promises).then(res => {
+                    await Promise.all(promises).then(res => {
                         console.log('[+] seeded product successfully')
                     }).catch(err => {
                         throw err;
@@ -199,12 +177,12 @@ function seedProducts() {
     });
 }
 
-function seedComments() {
-    Promise.all([
+async function seedComments() {
+    await Promise.all([
         Comment.query().count('* as commentCount'),
         Product.fetchAll({columns: ['id']}),
         User.fetchAll({columns: ['id']})
-    ]).then( res => {
+    ]).then(async res => {
         const count = res[0][0]['commentCount'];
         const product_ids = res[1];
         const user_ids = res[2];
@@ -227,7 +205,7 @@ function seedComments() {
                 user_id: user_id,
                 product_id: product_id,
             });
-            comment.save().then(comment => {
+            await comment.save().then(comment => {
 
             }).catch(err => {
                 throw err;
@@ -239,15 +217,15 @@ function seedComments() {
 
 }
 
-function seedAddresss() {
-    Address.query().count('* as addressesCount').then( result => {
+async function seedAddresss() {
+    await Address.query().count('* as addressesCount').then(async result => {
             const addressesCount = result[0]['addressesCount'];
             let addressesToSeed = 23;
             addressesToSeed -= addressesCount;
 
-            User.fetchAll({
+            await User.fetchAll({
                 columns: ['id', 'first_name', 'last_name']
-            }).then( users => {
+            }).then(async users => {
                 users = users.serialize();
                 const userIds = users.map(user => user.id); // or results[0].pluck('id')
 
@@ -269,7 +247,7 @@ function seedAddresss() {
                         address.set('last_name', faker.name.lastName());
                     }
 
-                    address.save(null, {debug: true}).then(result => {
+                    await address.save(null, {debug: true}).then(result => {
                     }).catch(err => {
                         throw err;
                     });
@@ -283,8 +261,8 @@ function seedAddresss() {
     });
 }
 
-function seedOrders() {
-    Order.fetchAll({
+async function seedOrders() {
+    await Order.fetchAll({
         columns: ['id']
     }).then(res => {
 
@@ -304,7 +282,7 @@ function seedOrders() {
             promises.push(Address.findAll(null, {columns: ['id', 'user_id']}));
             promises.push(Product.findAll(null, {columns: ['id', 'name', 'slug', 'price']}));
 
-            Promise.all(promises).then(res => {
+            return Promise.all(promises).then(res => {
                 promises.length = 0; // Clear the array
                 const users = res[0].serialize();
                 const addresses = res[1].serialize();
@@ -331,7 +309,7 @@ function seedOrders() {
                     promises.push(Order.create(order, {debug: true}));
                 }
 
-                Promise.all(promises).then(res => {
+                return Promise.all(promises).then(res => {
                     const orders = res;
                     promises.length = 0; // Clear the array
 
@@ -391,18 +369,18 @@ function seedOrders() {
     */
 }
 
-function seedAll() {
-    seedAdminFeature();
-    seedUsersFeature();
-    seedTags();
-    seedCategories();
+async function seedAll() {
+    await seedAdminFeature();
+    await seedUsersFeature();
+    await seedTags();
+    await seedCategories();
 
-    seedProducts();
-    seedComments();
+    await seedProducts();
+    await seedComments();
 
-    seedAddresss();
+    await seedAddresss();
 
-    seedOrders();
+    await seedOrders();
 
     console.log('[+] Finished seeding');
     process.exit();
