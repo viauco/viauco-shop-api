@@ -9,7 +9,7 @@ const parsePaginationParams = require('../middlewares/paging').parsePaginationPa
 require('./loaders/products').init(router);
 require('./loaders/tags').init(router);
 
-router.get('', parsePaginationParams, productsController.getAll);
+router.get('/products', parsePaginationParams, productsController.getAll);
 
 router.get('/products/:product_slug', productsController.getByIdOrSlug);
 router.get('/products/by_id/:productId', productsController.getByIdOrSlug);

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-require('./param_loaders/orders.loader').init(router);
+require('./loaders/orders').init(router);
 
 const ordersController = require('../controllers/orders');
 const AuthMiddleware = require('../middlewares/auth');
