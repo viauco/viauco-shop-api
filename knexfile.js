@@ -7,10 +7,10 @@ module.exports = {
         client: process.env.DATABASE_CONNECTION || 'postgresql',
         connection: {
             host : process.env.DATABASE_HOST || '127.0.0.1',
-            host : process.env.DATABASE_PORT || 5432,
+            port : process.env.DATABASE_PORT || 5432,
             database: process.env.DATABASE_NAME || 'shop',
-            user: process.env.DATABASE_USERNAME || 'username',
-            password: process.env.DATABASE_PASSWORD || 'password',
+            user: process.env.DATABASE_USERNAME || 'postgres',
+            password: process.env.DATABASE_PASSWORD || '123456',
             charset: 'utf8'
         },
         pool: {
@@ -25,7 +25,7 @@ module.exports = {
         client: process.env.DATABASE_CONNECTION || 'postgresql',
         connection: {
             host : process.env.DATABASE_HOST || '127.0.0.1',
-            host : process.env.DATABASE_PORT || 5432,
+            port : process.env.DATABASE_PORT || 5432,
             database: process.env.DATABASE_NAME || 'shop',
             user: process.env.DATABASE_USERNAME || 'username',
             password: process.env.DATABASE_PASSWORD || 'password',
@@ -44,7 +44,7 @@ module.exports = {
         client: process.env.DATABASE_CONNECTION || 'postgresql',
         connection: {
             host : process.env.DATABASE_HOST || '127.0.0.1',
-            host : process.env.DATABASE_PORT || 5432,
+            port : process.env.DATABASE_PORT || 5432,
             database: process.env.DATABASE_NAME || 'shop',
             user: process.env.DATABASE_USERNAME || 'username',
             password: process.env.DATABASE_PASSWORD || 'password',
