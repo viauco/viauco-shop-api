@@ -4,42 +4,51 @@ require('dotenv').config();
 module.exports = {
 
     development: {
-        client: 'postgresql',
+        client: process.env.DATABASE_CONNECTION || 'postgresql',
         connection: {
-            database: 'shop',
-            user: 'postgres',
-            password: '123456'
+            host : process.env.DATABASE_HOST || '127.0.0.1',
+            host : process.env.DATABASE_PORT || 5432,
+            database: process.env.DATABASE_NAME || 'shop',
+            user: process.env.DATABASE_USERNAME || 'username',
+            password: process.env.DATABASE_PASSWORD || 'password',
+            charset: 'utf8'
         },
         pool: {
-            min: process.env.DB_MIN_POOL || 2,
-            max: process.env.DB_MAX_POOL || 10
+            min: process.env.DATABASE_POOL_MIN || 2,
+            max: process.env.DATABASE_POOL_MAX || 10
         },
         migrations: {
-            tableName: process.env.DB_MIRATIONS_TABLE_NAME || 'migrations'
+            tableName: process.env.DATABASE_MIGRATIONS_TABLE || 'migrations'
         }
     },
     staging: {
-        client: 'postgresql',
+        client: process.env.DATABASE_CONNECTION || 'postgresql',
         connection: {
-            database: 'my_db',
-            user: 'username',
-            password: 'password'
+            host : process.env.DATABASE_HOST || '127.0.0.1',
+            host : process.env.DATABASE_PORT || 5432,
+            database: process.env.DATABASE_NAME || 'shop',
+            user: process.env.DATABASE_USERNAME || 'username',
+            password: process.env.DATABASE_PASSWORD || 'password',
+            charset: 'utf8'
         },
         pool: {
-            min: 2,
-            max: 10
+            min: process.env.DATABASE_POOL_MIN || 2,
+            max: process.env.DATABASE_POOL_MAX || 10
         },
         migrations: {
-            tableName: 'migrations'
+            tableName: process.env.DATABASE_MIGRATIONS_TABLE || 'migrations'
         }
     },
 
     production: {
         client: process.env.DATABASE_CONNECTION || 'postgresql',
         connection: {
+            host : process.env.DATABASE_HOST || '127.0.0.1',
+            host : process.env.DATABASE_PORT || 5432,
             database: process.env.DATABASE_NAME || 'shop',
             user: process.env.DATABASE_USERNAME || 'username',
-            password: process.env.DATABASE_PASSWORD || 'password'
+            password: process.env.DATABASE_PASSWORD || 'password',
+            charset: 'utf8'
         },
         pool: {
             min: process.env.DATABASE_POOL_MIN || 2,
