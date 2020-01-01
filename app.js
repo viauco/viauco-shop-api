@@ -21,6 +21,9 @@ arrRoutes.forEach( function(route) {
   app.use('/api', require('./routes/' + route) );
 } );
 
+app.use('/', (req, res) => { return 'Hello';});
+app.use('*', (req, res) => { return 'Hello';});
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
