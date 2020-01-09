@@ -1,43 +1,26 @@
 {
-  "name": "viauco-api",
-  "version": "0.0.0",
-  "private": true,
+  "name": "vue-storefront-simple-api",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "engines": {
+    "node": ">=10.14.1"
+  },
   "scripts": {
-    "start": "node ./bin/www",
-    "seed": "node ./seeder/seeds.js",
-    "migrate": "./node_modules/.bin/knex migrate:rollback && ./node_modules/.bin/knex migrate:latest"
+    "start": "nodemon --watch src ./src/server.js"
   },
   "dependencies": {
-    "bcrypt": "^3.0.7",
-    "bcrypt-nodejs": "0.0.3",
-    "bookshelf": "^0.14.2",
-    "bookshelf-eloquent": "^0.1.15",
-    "bookshelf-modelbase": "^2.10.4",
-    "bookshelf-scopes": "^1.5.1",
-    "bookshelf-virtuals-plugin": "^0.1.1",
-    "cookie-parser": "^1.4.4",
+    "config": "^3.0.1",
     "cors": "^2.8.5",
-    "debug": "^4.1.1",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-jwt": "^5.3.1",
-    "extend": "^3.0.2",
-    "faker": "^4.1.0",
-    "http-errors": "^1.7.3",
-    "jsonwebtoken": "^8.5.1",
-    "knex": "^0.16.3",
-    "lodash": "latest",
-    "memoizee": "^0.4.14",
-    "morgan": "~1.9.0",
-    "multer": "^1.4.2",
-    "mysql": "^2.17.1",
-    "pg": "^7.17.0",
-    "pug": "^2.0.4",
-    "sanitize-html": "^1.20.1",
-    "slugify": "^1.3.6",
-    "sqlite3": "^4.1.1"
+    "express": "^4.16.4",
+    "json-server": "^0.14.2",
+    "lowdb": "^1.0.0",
+    "node-config": "0.0.2",
+    "nodemon": "^1.18.9"
   },
-  "engines": {
-    "node": "10.x"
-  }
+  "devDependencies": {
+    "faker": "^4.1.0",
+    "typescript": "^3.2.4"
+  },
+  "private": false
 }
