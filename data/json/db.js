@@ -32,10 +32,7 @@ module.exports = {
             }
           })
         })
-      } else if (queryItem.hasOwnProperty('range')) {
-        
       }
-
     })
     return {
       items: [],
