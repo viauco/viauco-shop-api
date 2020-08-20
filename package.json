@@ -7,7 +7,7 @@
     "seed": "node ./seeder/seeds.js"
   },
   "dependencies": {
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "bcrypt-nodejs": "0.0.3",
     "bookshelf": "^0.14.2",
     "bookshelf-modelbase": "^2.10.4",
